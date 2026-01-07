@@ -344,9 +344,20 @@ For security vulnerabilities, see [SECURITY.md](SECURITY.md). Do not open public
 
 Business Source License 1.1 (BUSL-1.1)
 
-- **Non-production use**: Free for learning, development, testing, research
-- **Production use**: Requires commercial license until Change Date
-- **Change Date**: December 10, 2029 (converts to Apache 2.0)
+### You CAN:
+- Use SaferTrade for your own DeFi operations (personal/internal)
+- Run it on your own infrastructure
+- Study the code, fork it, and contribute improvements
+- Use it for research, testing, learning, and development
+
+### You CANNOT (without a commercial license):
+- Offer SaferTrade as a paid service to others
+- Include it in a commercial product you sell
+- Use it in production for a business generating revenue
+
+**Change Date**: December 10, 2029 (converts to Apache 2.0)
+
+**Commercial License**: For enterprise/production use, contact the maintainers.
 
 See [LICENSE](LICENSE) and [LICENSE_FAQ.md](LICENSE_FAQ.md) for details.
 
