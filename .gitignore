@@ -1,0 +1,43 @@
+# === SECRETS ===
+.env
+.env.*
+!.env.example
+secrets/
+*.key
+*.pem
+*.jwt
+
+# === DATABASES ===
+*.db
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+dump.rdb
+
+# === PYTHON ===
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+.venv/
+*.egg-info/
+
+# === LOGS ===
+logs/*.log
+*.log
+*.out
+
+# === IDE ===
+.vscode/
+.idea/
+*.swp
+
+# === OS ===
+.DS_Store
+Thumbs.db
+
+# === BUILD ===
+dist/
+build/
+node_modules/

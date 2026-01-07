@@ -1,0 +1,25 @@
+{
+  "signal_type": "bridge_arbitrage", 
+  "timestamp": 1757252602,
+  "confidence": 92,
+  "data_source": "bridge_arbitrage",
+  "version": "v1.0",
+  "tenant_id": "default",
+  "processing_time": 23.1,
+  "explanation": "Cross-chain arbitrage opportunity via Arbitrum bridge with high profit margin",
+  "signal_data": {
+    "bridge": "arbitrum",
+    "route": "ethereum -> arbitrum",
+    "token": "USDC",
+    "profit_usd": "245.67",
+    "profit_pct": "1.23",
+    "capital_required": "20000.00",
+    "delay_sec": "180"
+  },
+  "metadata": {
+    "chain_id": "42161",
+    "block_number": 123456789,
+    "gas_price_gwei": 25,
+    "estimated_execution_time": 180.0
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "signal_type": "gap_detection",
+  "timestamp": 1757252579,
+  "confidence": 85,
+  "data_source": "gap_finder",
+  "version": "v1.0",
+  "tenant_id": "default",
+  "processing_time": 45.2,
+  "explanation": "High-quality arbitrage opportunity detected with strong confidence",
+  "signal_data": {
+    "type": "good_arbitrage",
+    "pool_depth_usd": "750000",
+    "est_edge_bps": "20",
+    "notional_usd": "12000",
+    "gas_gwei": "30",
+    "text": "High-quality ETH arbitrage"
+  },
+  "metadata": {
+    "chain_id": "1",
+    "block_number": 18234567,
+    "gas_price_gwei": 30,
+    "estimated_execution_time": 12.5
+  }
+}

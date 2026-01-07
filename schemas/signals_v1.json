@@ -1,0 +1,131 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "SaferTrade Signal Schema v1.0",
+  "description": "Versioned schema for MEV/security signals from SaferTrade protection platform",
+  "type": "object",
+  "required": ["signal_type", "timestamp", "confidence", "data_source", "version"],
+  "properties": {
+    "signal_type": {
+      "type": "string",
+      "enum": ["gap_detection", "bridge_arbitrage", "cross_chain_arbitrage", "flash_loan_opportunity"],
+      "description": "Type of signal being generated"
+    },
+    "timestamp": {
+      "type": "number",
+      "description": "Unix timestamp when signal was generated"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Confidence score 0-100 for signal quality"
+    },
+    "data_source": {
+      "type": "string",
+      "description": "Source component that generated the signal (e.g., gap_finder, bridge_arbitrage)"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^v\\d+\\.\\d+$",
+      "description": "Schema version (e.g., v1.0)"
+    },
+    "tenant_id": {
+      "type": "string",
+      "description": "Tenant identifier for multi-tenant deployments"
+    },
+    "processing_time": {
+      "type": "number",
+      "description": "Processing time in milliseconds"
+    },
+    "explanation": {
+      "type": "string",
+      "description": "Human-readable explanation of the signal"
+    },
+    "signal_data": {
+      "type": "object",
+      "description": "Signal-specific data payload",
+      "anyOf": [
+        {"$ref": "#/definitions/gap_detection"},
+        {"$ref": "#/definitions/bridge_arbitrage"}
+      ]
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "chain_id": {"type": "string"},
+        "block_number": {"type": "integer"},
+        "transaction_hash": {"type": "string"},
+        "gas_price_gwei": {"type": "number"},
+        "estimated_execution_time": {"type": "number"}
+      },
+      "description": "Additional metadata for signal context"
+    }
+  },
+  "definitions": {
+    "gap_detection": {
+      "type": "object",
+      "required": ["pool_depth_usd", "est_edge_bps", "notional_usd"],
+      "properties": {
+        "pool_depth_usd": {
+          "type": "string",
+          "description": "Pool depth in USD"
+        },
+        "est_edge_bps": {
+          "type": "string", 
+          "description": "Estimated edge in basis points"
+        },
+        "notional_usd": {
+          "type": "string",
+          "description": "Notional amount in USD"
+        },
+        "gas_gwei": {
+          "type": "string",
+          "description": "Gas price in gwei"
+        },
+        "text": {
+          "type": "string",
+          "description": "Human readable description"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["good_arbitrage", "bad_arbitrage", "bad_arb", "final_test"],
+          "description": "Gap detection type classification"
+        }
+      }
+    },
+    "bridge_arbitrage": {
+      "type": "object", 
+      "required": ["bridge", "route", "token", "profit_usd"],
+      "properties": {
+        "bridge": {
+          "type": "string",
+          "description": "Bridge protocol name"
+        },
+        "route": {
+          "type": "string",
+          "description": "Source and destination chain route"
+        },
+        "token": {
+          "type": "string", 
+          "description": "Token symbol being arbitraged"
+        },
+        "profit_usd": {
+          "type": "string",
+          "description": "Expected profit in USD"
+        },
+        "profit_pct": {
+          "type": "string",
+          "description": "Profit percentage"
+        },
+        "capital_required": {
+          "type": "string",
+          "description": "Required capital in USD"
+        },
+        "delay_sec": {
+          "type": "string",
+          "description": "Estimated execution delay in seconds"
+        }
+      }
+    }
+  }
+}

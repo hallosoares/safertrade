@@ -1,0 +1,37 @@
+Business Source License 1.1
+
+Licensor: Felipe Simon ("SaferTrade")
+
+Licensed Work: SaferTrade — DeFi Risk Intelligence Platform (the "Licensed Work").
+			   The Licensed Work is defined as the contents of the repository at
+			   https://github.com/gadayubn/safertrade and all files therein,
+			   excluding third-party dependencies.
+
+Additional Use Grant: You may use, copy, modify, create derivative works, and
+redistribute the Licensed Work for non-production purposes, including learning,
+development, testing, research, evaluation, and internal proofs-of-concept.
+Production use, including hosting, offering, selling, or providing the Licensed
+Work or any derivative as a service or product to third parties, requires a
+commercial license from the Licensor.
+
+Change Date: December 10, 2029
+
+Change License: GNU General Public License, version 2.0, or a compatible license
+
+For the avoidance of doubt, the Licensed Work is governed by the Business Source
+License Version 1.1 ("BUSL-1.1"). A copy of the standard text of BUSL-1.1 can be
+found at: https://mariadb.com/bsl11/
+
+The Licensor grants you the rights defined in the BUSL-1.1 to the Licensed Work,
+subject to the Additional Use Grant defined above. On the Change Date, the Licensed
+Work will automatically be made available under the Change License.
+
+THE LICENSED WORK IS PROVIDED "AS IS", WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, EITHER EXPRESS OR IMPLIED, INCLUDING, WITHOUT LIMITATION, WARRANTIES OR
+CONDITIONS OF TITLE, NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A
+PARTICULAR PURPOSE. YOU ARE SOLELY RESPONSIBLE FOR COMPLIANCE WITH ALL APPLICABLE
+LAWS AND REGULATIONS WHEN USING THE LICENSED WORK.
+
+If you wish to use the Licensed Work in production or for commercial purposes prior
+to the Change Date, please contact the Licensor for a commercial license. See
+COMMERCIAL_LICENSE.md for details.
