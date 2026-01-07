@@ -7,221 +7,161 @@ SaferTrade provides detection engines for identifying honeypots, phishing addres
 [![License: BUSL-1.1](https://img.shields.io/badge/License-BUSL--1.1-blue.svg)](LICENSE)
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11+-3776ab.svg)](https://python.org)
 [![Redis](https://img.shields.io/badge/Redis-Streams-dc382d.svg)](https://redis.io)
+[![Tests](https://github.com/hallosoares/safertrade/actions/workflows/tests.yml/badge.svg)](https://github.com/hallosoares/safertrade/actions/workflows/tests.yml)
+[![Engines](https://img.shields.io/badge/Engines-10+-green.svg)](#detection-engines)
+[![Maintained](https://img.shields.io/badge/Maintained-yes-brightgreen.svg)](https://github.com/hallosoares/safertrade/commits/main)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
 ---
 
 ## Overview
 
-SaferTrade is a modular threat detection system designed for DeFi applications. It monitors on-chain activity in real-time and produces structured alerts via Redis Streams.
+SaferTrade is a comprehensive DeFi threat detection platform that monitors blockchain activity in real-time. Built with a modular engine architecture, it can identify various types of malicious activity and market manipulation across Ethereum, Base, Polygon, Optimism, Arbitrum, Blast, and Solana networks.
 
-**Core capabilities:**
-- Honeypot token detection (buy-only contracts)
-- Phishing address identification
-- Pump-and-dump pattern recognition
-- Oracle price manipulation monitoring
-- Stablecoin depeg tracking
-- Token holder concentration analysis
-- Liquidity risk assessment
+### Key Features
+
+- **Modular Detection Engines**: Each threat type has a dedicated engine
+- **Multi-Chain Support**: 7 blockchain networks supported
+- **Real-Time Processing**: Redis Streams for low-latency event processing
+- **Extensible Architecture**: Add custom engines with minimal boilerplate
+
+---
+
+## Detection Engines
+
+| Engine | Description |
+|--------|-------------|
+| `honeypot_checker` | Detects honeypot token contracts that prevent selling |
+| `pump_detector` | Identifies pump-and-dump scheme patterns |
+| `oracle_manipulation_detector` | Monitors for oracle price manipulation |
+| `stablecoin_depeg_monitor` | Tracks stablecoin peg deviations |
+| `token_holder_analyzer` | Analyzes token holder concentration |
+| `gas_price_optimizer` | Monitors gas price anomalies |
+| `health_check` | System health monitoring |
+| `ohlcv_data_feed` | OHLCV data aggregation |
+| `alert_processor` | Alert routing and delivery |
+| `phishing_detector` | Identifies known phishing addresses |
+
+---
+
+## Installation
+
+### Prerequisites
+
+- Python 3.11 or higher
+- Redis 7.0 or higher
+- RPC access to target blockchain networks
+
+### Setup
+
+```bash
+# Clone the repository
+git clone https://github.com/hallosoares/safertrade.git
+cd safertrade
+
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Configure environment
+cp .env.example .env
+# Edit .env with your RPC endpoints and API keys
+```
+
+---
+
+## Quick Start
+
+```python
+from engines.honeypot_checker.engine import HoneypotChecker
+from shared.redis_client import get_redis_client
+
+# Initialize
+redis = get_redis_client()
+checker = HoneypotChecker(redis)
+
+# Check a token
+result = checker.check_token("0x...")
+print(f"Is honeypot: {result.is_honeypot}")
+```
+
+See [examples/](examples/) for more usage patterns.
+
+---
+
+## Configuration
+
+Configuration is managed through environment variables. Key settings:
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `REDIS_URL` | Redis connection string | `redis://localhost:6379` |
+| `RPC_ETHEREUM` | Ethereum RPC endpoint | Required |
+| `RPC_BASE` | Base RPC endpoint | Required |
+| `LOG_LEVEL` | Logging verbosity | `INFO` |
+
+See [docs/CONFIGURATION.md](docs/CONFIGURATION.md) for full configuration reference.
+
+---
 
 ## Architecture
 
 ```
-Blockchain RPC ──> Detection Engines ──> Redis Streams ──> Consumers
-                         │
-                         └──> SQLite (persistence)
-```
-
-**Components:**
-- **Engines**: Independent Python workers that analyze on-chain data
-- **Transport**: Redis Streams for real-time message delivery
-- **Storage**: SQLite with WAL journaling for historical persistence
-- **Alerts**: Canonical envelope format with schema versioning
-
-## Supported Networks
-
-| Network | Chain ID | Status |
-|---------|----------|--------|
-| Ethereum | 1 | Supported |
-| Base | 8453 | Supported |
-| Polygon | 137 | Supported |
-| Optimism | 10 | Supported |
-| Arbitrum | 42161 | Supported |
-| Blast | 81457 | Supported |
-| Solana | — | Supported |
-
-## Quick Start
-
-### Prerequisites
-- Python 3.11 or higher
-- Redis 6.0 or higher
-- Blockchain RPC access (Alchemy, Infura, or similar)
-
-### Installation
-
-```bash
-git clone https://github.com/hallosoares/safertrade.git
-cd safertrade
-
-python3 -m venv venv
-source venv/bin/activate
-
-pip install -r requirements.txt
-
-cp .env.example .env
-# Configure your RPC endpoints and Redis connection in .env
-```
-
-### Running an Engine
-
-```bash
-# Start Redis
-redis-server &
-
-# Run honeypot detection
-python engines/honeypot_checker.py
-
-# Run with health check only
-python engines/honeypot_checker.py --health
-```
-
-## Detection Engines
-
-| Engine | Purpose |
-|--------|---------|
-| `honeypot_checker.py` | Identifies tokens with restricted sell functionality |
-| `pump_detector.py` | Detects coordinated price manipulation patterns |
-| `oracle_manipulation_detector.py` | Monitors for price feed attacks |
-| `stablecoin_depeg_monitor.py` | Tracks stablecoin peg deviations |
-| `token_holder_analyzer.py` | Analyzes holder distribution and concentration |
-| `gas_price_optimizer.py` | Optimizes transaction gas costs |
-| `ohlcv_data_feed.py` | Provides market data feeds |
-| `alert_processor.py` | Routes alerts to delivery channels |
-| `health_check.py` | System health monitoring |
-
-### Usage Example
-
-```python
-from engines.honeypot_checker import HoneypotChecker
-
-checker = HoneypotChecker()
-result = await checker.analyze_token(
-    token_address="0x...",
-    chain="ethereum"
-)
-
-if result["is_honeypot"]:
-    print(f"Warning: Token flagged as honeypot")
-    print(f"Risk score: {result['risk_score']}")
-```
-
-## Alert Format
-
-All engines produce alerts following the canonical envelope schema:
-
-```json
-{
-  "schema_v": "1.0",
-  "type": "HONEYPOT_ALERT",
-  "lane": "contract_safety",
-  "timestamp": "2026-01-07T12:00:00Z",
-  "data": {
-    "token_address": "0x...",
-    "chain": "ethereum",
-    "risk_score": 0.85,
-    "is_honeypot": true
-  }
-}
-```
-
-See `schemas/signals_v1.json` for the complete schema definition.
-
-## Project Structure
-
-```
 safertrade/
-├── engines/           # Detection engine modules
-├── shared/            # Common utilities and configuration
-│   ├── chains.py      # Chain definitions and RPC config
-│   ├── redis_client.py
-│   ├── database_config.py
-│   └── ...
-├── schemas/           # Signal and alert schemas
-├── tests/             # Unit and integration tests
+├── engines/           # Detection engines (modular, independent)
+├── shared/            # Common utilities and clients
+├── schemas/           # Data models and validation
+├── data/              # Static data (phishing lists, etc.)
 ├── docs/              # Documentation
-└── examples/          # Usage examples
+└── tests/             # Test suite
 ```
 
-## Configuration
+Each engine is self-contained with its own configuration, processing logic, and output format. Engines communicate via Redis Streams.
 
-Environment variables (see `.env.example`):
-
-| Variable | Description |
-|----------|-------------|
-| `REDIS_HOST` | Redis server hostname |
-| `REDIS_PORT` | Redis server port |
-| `REDIS_PASSWORD` | Redis authentication password |
-| `ALCHEMY_API_KEY` | Alchemy RPC API key |
-| `ETHERSCAN_API_KEY` | Etherscan API key for contract verification |
-
-## Roadmap
-
-**Current Release (v1.0)**
-- Core detection engines
-- Multi-chain support
-- Redis Streams integration
-- Canonical alert schema
-
-**In Development**
-- REST API for programmatic access
-- Web-based monitoring dashboard
-- WebSocket real-time notifications
-- Extended ML-based detection models
-
-**Planned**
-- Whale movement tracking
-- MEV and sandwich attack detection
-- Flash loan attack analysis
-- Cross-chain correlation
+---
 
 ## Contributing
 
 Contributions are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting pull requests.
 
-**Development workflow:**
-1. Fork the repository
-2. Create a feature branch
-3. Make changes following the code standards
-4. Run tests: `python -m pytest tests/`
-5. Submit a pull request
+### Development Setup
 
-## License
+```bash
+# Install dev dependencies
+pip install -r requirements-dev.txt
 
-This project is licensed under the Business Source License 1.1 (BUSL-1.1).
+# Run tests
+pytest
 
-**Permitted uses:**
-- Learning and education
-- Development and testing
-- Research and evaluation
-- Internal proof-of-concept
-
-**Commercial/production use** requires a separate commercial license. Contact the maintainers for licensing inquiries.
-
-**Change Date:** December 10, 2029 (converts to GPLv2)
-
-See [LICENSE](LICENSE), [COMMERCIAL_LICENSE.md](COMMERCIAL_LICENSE.md), and [LICENSE_FAQ.md](LICENSE_FAQ.md) for details.
-
-## Documentation
-
-- [Getting Started Guide](docs/GETTING_STARTED.md)
-- [Commercial Licensing](COMMERCIAL_LICENSE.md)
-- [Security Policy](SECURITY.md)
-- [Changelog](CHANGELOG.md)
-
-## Support
-
-- [GitHub Issues](https://github.com/hallosoares/safertrade/issues) — Bug reports and feature requests
-- [GitHub Discussions](https://github.com/hallosoares/safertrade/discussions) — Questions and community discussion
+# Run linter
+ruff check .
+```
 
 ---
 
-Copyright 2024-2026 SaferTrade Contributors. All rights reserved.
+## Security
+
+For security vulnerabilities, please see [SECURITY.md](SECURITY.md). Do not open public issues for security concerns.
+
+---
+
+## License
+
+This project is licensed under the Business Source License 1.1. See [LICENSE](LICENSE) for details.
+
+**TL;DR**: Free for non-production use. Production/commercial use requires a commercial license until the Change Date (December 10, 2029), after which it converts to Apache 2.0.
+
+---
+
+## Support
+
+- **Documentation**: [docs/](docs/)
+- **Issues**: [GitHub Issues](https://github.com/hallosoares/safertrade/issues)
+- **Security**: security@safertrade.io
+
+---
+
+Built for the DeFi community.
