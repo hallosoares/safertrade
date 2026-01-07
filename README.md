@@ -1,79 +1,136 @@
-# SaferTrade
+<p align="center">
+  <img src="assets/images/logo.png" alt="SaferTrade Logo" width="400">
+</p>
 
-**Real-time DeFi threat detection and risk intelligence platform.**
+<p align="center">
+  <strong>Real-time DeFi threat detection and risk intelligence platform</strong>
+</p>
 
-SaferTrade provides detection engines for identifying honeypots, phishing addresses, pump-and-dump schemes, oracle manipulation, and other DeFi threats across multiple blockchain networks.
-
-[![License: BUSL-1.1](https://img.shields.io/badge/License-BUSL--1.1-blue.svg)](LICENSE)
-[![Python 3.11+](https://img.shields.io/badge/Python-3.11+-3776ab.svg)](https://python.org)
-[![Redis](https://img.shields.io/badge/Redis-Streams-dc382d.svg)](https://redis.io)
-[![Tests](https://github.com/hallosoares/safertrade/actions/workflows/tests.yml/badge.svg)](https://github.com/hallosoares/safertrade/actions/workflows/tests.yml)
-[![Engines](https://img.shields.io/badge/Engines-10+-green.svg)](#detection-engines)
-[![Maintained](https://img.shields.io/badge/Maintained-yes-brightgreen.svg)](https://github.com/hallosoares/safertrade/commits/main)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-BUSL--1.1-blue.svg" alt="License"></a>
+  <a href="https://python.org"><img src="https://img.shields.io/badge/Python-3.11+-3776ab.svg" alt="Python"></a>
+  <a href="https://redis.io"><img src="https://img.shields.io/badge/Redis-Streams-dc382d.svg" alt="Redis"></a>
+  <a href="https://github.com/hallosoares/safertrade/actions/workflows/tests.yml"><img src="https://github.com/hallosoares/safertrade/actions/workflows/tests.yml/badge.svg" alt="Tests"></a>
+  <a href="#detection-engines"><img src="https://img.shields.io/badge/Engines-10+-green.svg" alt="Engines"></a>
+  <a href="https://github.com/hallosoares/safertrade/commits/main"><img src="https://img.shields.io/badge/Maintained-yes-brightgreen.svg" alt="Maintained"></a>
+  <a href="CONTRIBUTING.md"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome"></a>
+</p>
 
 ---
 
-## Overview
+## What is SaferTrade?
 
-SaferTrade is a comprehensive DeFi threat detection platform that monitors blockchain activity in real-time. Built with a modular engine architecture, it can identify various types of malicious activity and market manipulation across Ethereum, Base, Polygon, Optimism, Arbitrum, Blast, and Solana networks.
+SaferTrade is the **only open-source, production-ready** DeFi threat detection platform. While other projects document threats, we detect them in real-time across 7 blockchain networks with 10+ specialized engines.
 
-### Key Features
+**Key differentiators:**
+- Working detection code (not just documentation)
+- Real-time monitoring via Redis Streams
+- Multi-chain support out of the box
+- Modular engine architecture for extensibility
 
-- **Modular Detection Engines**: Each threat type has a dedicated engine
-- **Multi-Chain Support**: 7 blockchain networks supported
-- **Real-Time Processing**: Redis Streams for low-latency event processing
-- **Extensible Architecture**: Add custom engines with minimal boilerplate
+---
+
+## Architecture
+
+```
+                                    SAFERTRADE ARCHITECTURE
+    
+    ┌─────────────────────────────────────────────────────────────────────────────┐
+    │                              DATA SOURCES                                    │
+    │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐           │
+    │  │ Ethereum │ │   Base   │ │ Polygon  │ │ Arbitrum │ │  Solana  │  + more   │
+    │  │   RPC    │ │   RPC    │ │   RPC    │ │   RPC    │ │   RPC    │           │
+    │  └────┬─────┘ └────┬─────┘ └────┬─────┘ └────┬─────┘ └────┬─────┘           │
+    │       │            │            │            │            │                  │
+    └───────┼────────────┼────────────┼────────────┼────────────┼──────────────────┘
+            │            │            │            │            │
+            └────────────┴────────────┼────────────┴────────────┘
+                                      │
+                                      ▼
+    ┌─────────────────────────────────────────────────────────────────────────────┐
+    │                           DETECTION ENGINES                                  │
+    │                                                                              │
+    │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐              │
+    │  │    Honeypot     │  │  Pump & Dump    │  │     Oracle      │              │
+    │  │    Checker      │  │   Detector      │  │  Manipulation   │              │
+    │  └────────┬────────┘  └────────┬────────┘  └────────┬────────┘              │
+    │           │                    │                    │                        │
+    │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐              │
+    │  │   Stablecoin    │  │     Token       │  │    Phishing     │              │
+    │  │  Depeg Monitor  │  │ Holder Analyzer │  │    Detector     │              │
+    │  └────────┬────────┘  └────────┬────────┘  └────────┬────────┘              │
+    │           │                    │                    │                        │
+    └───────────┼────────────────────┼────────────────────┼────────────────────────┘
+                │                    │                    │
+                └────────────────────┼────────────────────┘
+                                     │
+                                     ▼
+    ┌─────────────────────────────────────────────────────────────────────────────┐
+    │                            REDIS STREAMS                                     │
+    │                                                                              │
+    │    safertrade:results    signals.honeypot    signals.pump    signals.oracle  │
+    │          │                                                                   │
+    └──────────┼───────────────────────────────────────────────────────────────────┘
+               │
+               ▼
+    ┌─────────────────────────────────────────────────────────────────────────────┐
+    │                              OUTPUTS                                         │
+    │                                                                              │
+    │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     │
+    │  │   REST API   │  │  WebSocket   │  │   Telegram   │  │   Webhooks   │     │
+    │  │   /api/v1    │  │    Alerts    │  │    Alerts    │  │   Callbacks  │     │
+    │  └──────────────┘  └──────────────┘  └──────────────┘  └──────────────┘     │
+    │                                                                              │
+    └─────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 
 ## Detection Engines
 
-| Engine | Description |
-|--------|-------------|
-| `honeypot_checker` | Detects honeypot token contracts that prevent selling |
-| `pump_detector` | Identifies pump-and-dump scheme patterns |
-| `oracle_manipulation_detector` | Monitors for oracle price manipulation |
-| `stablecoin_depeg_monitor` | Tracks stablecoin peg deviations |
-| `token_holder_analyzer` | Analyzes token holder concentration |
-| `gas_price_optimizer` | Monitors gas price anomalies |
-| `health_check` | System health monitoring |
-| `ohlcv_data_feed` | OHLCV data aggregation |
-| `alert_processor` | Alert routing and delivery |
-| `phishing_detector` | Identifies known phishing addresses |
+| Engine | Threat Type | Description |
+|--------|-------------|-------------|
+| `honeypot_checker` | Contract Risk | Detects honeypot contracts that prevent token selling |
+| `pump_detector` | Market Manipulation | Identifies coordinated pump-and-dump schemes |
+| `oracle_manipulation_detector` | Price Attack | Monitors for oracle price manipulation attempts |
+| `stablecoin_depeg_monitor` | Peg Risk | Tracks stablecoin deviations from peg |
+| `token_holder_analyzer` | Concentration Risk | Analyzes whale concentration and distribution |
+| `phishing_detector` | Fraud | Identifies known phishing addresses and patterns |
+| `gas_price_optimizer` | Cost | Monitors gas price anomalies and optimization |
+| `health_check` | System | Platform health monitoring |
+| `ohlcv_data_feed` | Data | Market data aggregation and validation |
+| `alert_processor` | Delivery | Alert routing and multi-channel delivery |
 
 ---
 
-## Installation
+## Quick Start
 
 ### Prerequisites
+- Python 3.11+
+- Redis 7.0+
+- RPC endpoints for target chains
 
-- Python 3.11 or higher
-- Redis 7.0 or higher
-- RPC access to target blockchain networks
-
-### Setup
+### Installation
 
 ```bash
-# Clone the repository
+# Clone repository
 git clone https://github.com/hallosoares/safertrade.git
 cd safertrade
 
 # Create virtual environment
 python -m venv venv
-source venv/bin/activate
+source venv/bin/activate  # Linux/Mac
+# or: venv\Scripts\activate  # Windows
 
 # Install dependencies
 pip install -r requirements.txt
 
 # Configure environment
 cp .env.example .env
-# Edit .env with your RPC endpoints and API keys
+# Edit .env with your RPC endpoints
 ```
 
----
-
-## Quick Start
+### Basic Usage
 
 ```python
 from engines.honeypot_checker.engine import HoneypotChecker
@@ -83,49 +140,109 @@ from shared.redis_client import get_redis_client
 redis = get_redis_client()
 checker = HoneypotChecker(redis)
 
-# Check a token
+# Check a token for honeypot characteristics
 result = checker.check_token("0x...")
-print(f"Is honeypot: {result.is_honeypot}")
+
+if result.is_honeypot:
+    print(f"WARNING: Honeypot detected!")
+    print(f"Risk score: {result.risk_score}")
+    print(f"Reason: {result.reason}")
+else:
+    print("Token appears safe")
+```
+
+### Run Detection Engine
+
+```bash
+# Start the honeypot checker engine
+python -m engines.honeypot_checker.engine
+
+# Output will stream to Redis: safertrade:results
 ```
 
 See [examples/](examples/) for more usage patterns.
 
 ---
 
-## Configuration
+## Multi-Chain Support
 
-Configuration is managed through environment variables. Key settings:
+SaferTrade monitors threats across multiple networks:
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `REDIS_URL` | Redis connection string | `redis://localhost:6379` |
-| `RPC_ETHEREUM` | Ethereum RPC endpoint | Required |
-| `RPC_BASE` | Base RPC endpoint | Required |
-| `LOG_LEVEL` | Logging verbosity | `INFO` |
-
-See [docs/CONFIGURATION.md](docs/CONFIGURATION.md) for full configuration reference.
+| Network | Chain ID | Status |
+|---------|----------|--------|
+| Ethereum | 1 | Supported |
+| Base | 8453 | Supported |
+| Polygon | 137 | Supported |
+| Optimism | 10 | Supported |
+| Arbitrum | 42161 | Supported |
+| Blast | 81457 | Supported |
+| Solana | - | Supported |
 
 ---
 
-## Architecture
+## Configuration
+
+Key environment variables:
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `REDIS_URL` | Redis connection string | Yes |
+| `RPC_ETHEREUM` | Ethereum RPC endpoint | Yes |
+| `RPC_BASE` | Base RPC endpoint | Yes |
+| `RPC_POLYGON` | Polygon RPC endpoint | Optional |
+| `LOG_LEVEL` | Logging verbosity (DEBUG, INFO, WARNING) | No |
+
+See [docs/CONFIGURATION.md](docs/CONFIGURATION.md) for full reference.
+
+---
+
+## Project Structure
 
 ```
 safertrade/
 ├── engines/           # Detection engines (modular, independent)
+│   ├── honeypot_checker/
+│   ├── pump_detector/
+│   ├── oracle_manipulation_detector/
+│   └── ...
 ├── shared/            # Common utilities and clients
+│   ├── redis_client.py
+│   ├── chains.py
+│   └── ...
 ├── schemas/           # Data models and validation
 ├── data/              # Static data (phishing lists, etc.)
 ├── docs/              # Documentation
+├── examples/          # Usage examples
 └── tests/             # Test suite
 ```
 
-Each engine is self-contained with its own configuration, processing logic, and output format. Engines communicate via Redis Streams.
+---
+
+## API Reference
+
+When running the API server, documentation is available at:
+
+- **Swagger UI**: `http://localhost:8000/docs`
+- **ReDoc**: `http://localhost:8000/redoc`
+
+### Example Endpoints
+
+```bash
+# Check token safety
+GET /api/v1/token/{address}/safety
+
+# Get whale movements
+GET /api/v1/whale/movements?chain=ethereum&limit=100
+
+# Subscribe to alerts (WebSocket)
+WS /api/v1/ws/alerts
+```
 
 ---
 
 ## Contributing
 
-Contributions are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting pull requests.
+We welcome contributions. Please read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting pull requests.
 
 ### Development Setup
 
@@ -138,21 +255,34 @@ pytest
 
 # Run linter
 ruff check .
+
+# Type checking
+mypy engines/ shared/
 ```
+
+### Good First Issues
+
+Check issues labeled [`good first issue`](https://github.com/hallosoares/safertrade/labels/good%20first%20issue) for beginner-friendly contributions.
 
 ---
 
 ## Security
 
-For security vulnerabilities, please see [SECURITY.md](SECURITY.md). Do not open public issues for security concerns.
+For security vulnerabilities, see [SECURITY.md](SECURITY.md). Do not open public issues for security concerns.
+
+**Responsible Disclosure**: security@safertrade.io
 
 ---
 
 ## License
 
-This project is licensed under the Business Source License 1.1. See [LICENSE](LICENSE) for details.
+Business Source License 1.1 (BUSL-1.1)
 
-**TL;DR**: Free for non-production use. Production/commercial use requires a commercial license until the Change Date (December 10, 2029), after which it converts to Apache 2.0.
+- **Non-production use**: Free for learning, development, testing, research
+- **Production use**: Requires commercial license until Change Date
+- **Change Date**: December 10, 2029 (converts to Apache 2.0)
+
+See [LICENSE](LICENSE) and [LICENSE_FAQ.md](LICENSE_FAQ.md) for details.
 
 ---
 
@@ -160,8 +290,10 @@ This project is licensed under the Business Source License 1.1. See [LICENSE](LI
 
 - **Documentation**: [docs/](docs/)
 - **Issues**: [GitHub Issues](https://github.com/hallosoares/safertrade/issues)
-- **Security**: security@safertrade.io
+- **Discussions**: [GitHub Discussions](https://github.com/hallosoares/safertrade/discussions)
 
 ---
 
-Built for the DeFi community.
+<p align="center">
+  <sub>Built for the DeFi community. Protect your investments.</sub>
+</p>
