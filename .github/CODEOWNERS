@@ -2,17 +2,17 @@
 # These users will be automatically requested for review
 
 # Default owners for everything
-* @gadayubn
+* @hallosoares
 
 # Engine modules
-/engines/ @gadayubn
+/engines/ @hallosoares
 
 # Shared utilities
-/shared/ @gadayubn
+/shared/ @hallosoares
 
 # Schemas
-/schemas/ @gadayubn
+/schemas/ @hallosoares
 
 # Documentation
-*.md @gadayubn
-/docs/ @gadayubn
+*.md @hallosoares
+/docs/ @hallosoares

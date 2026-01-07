@@ -15,7 +15,7 @@ We take security seriously. If you discover a security vulnerability, please fol
 
 1. **Do not** open a public GitHub issue for security vulnerabilities
 2. **Do not** discuss the vulnerability publicly before it is fixed
-3. Report privately via [GitHub Security Advisories](https://github.com/gadayubn/safertrade/security/advisories/new)
+3. Report privately via [GitHub Security Advisories](https://github.com/hallosoares/safertrade/security/advisories/new)
 
 ### Information to Include
 

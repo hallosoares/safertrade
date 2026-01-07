@@ -59,7 +59,7 @@ Blockchain RPC ──> Detection Engines ──> Redis Streams ──> Consumers
 ### Installation
 
 ```bash
-git clone https://github.com/gadayubn/safertrade.git
+git clone https://github.com/hallosoares/safertrade.git
 cd safertrade
 
 python3 -m venv venv
@@ -219,8 +219,8 @@ See [LICENSE](LICENSE), [COMMERCIAL_LICENSE.md](COMMERCIAL_LICENSE.md), and [LIC
 
 ## Support
 
-- [GitHub Issues](https://github.com/gadayubn/safertrade/issues) — Bug reports and feature requests
-- [GitHub Discussions](https://github.com/gadayubn/safertrade/discussions) — Questions and community discussion
+- [GitHub Issues](https://github.com/hallosoares/safertrade/issues) — Bug reports and feature requests
+- [GitHub Discussions](https://github.com/hallosoares/safertrade/discussions) — Questions and community discussion
 
 ---
 

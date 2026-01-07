@@ -13,7 +13,7 @@ Welcome to SaferTrade! This guide will help you get up and running quickly.
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/gadayubn/safertrade.git
+git clone https://github.com/hallosoares/safertrade.git
 cd safertrade
 ```
 
@@ -138,10 +138,10 @@ Error: 429 Too Many Requests
 ## Next Steps
 
 1. Explore the [examples/](../examples/) directory
-2. Join our [GitHub Discussions](https://github.com/gadayubn/safertrade/discussions)
-3. Check out [open issues](https://github.com/gadayubn/safertrade/issues) to contribute
+2. Join our [GitHub Discussions](https://github.com/hallosoares/safertrade/discussions)
+3. Check out [open issues](https://github.com/hallosoares/safertrade/issues) to contribute
 
 ## Getting Help
 
-- 💬 [GitHub Discussions](https://github.com/gadayubn/safertrade/discussions)
-- 🐛 [Issue Tracker](https://github.com/gadayubn/safertrade/issues)
+- 💬 [GitHub Discussions](https://github.com/hallosoares/safertrade/discussions)
+- 🐛 [Issue Tracker](https://github.com/hallosoares/safertrade/issues)
