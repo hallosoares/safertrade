@@ -18,6 +18,23 @@
 
 ---
 
+## Table of Contents
+
+- [What is SaferTrade?](#what-is-safertrade)
+- [Architecture](#architecture)
+- [Detection Engines](#detection-engines)
+- [Quick Start](#quick-start)
+  - [Docker (Recommended)](#docker-recommended)
+  - [Manual Installation](#manual-installation)
+- [Multi-Chain Support](#multi-chain-support)
+- [Configuration](#configuration)
+- [API Reference](#api-reference)
+- [Examples](#examples)
+- [Contributing](#contributing)
+- [License](#license)
+
+---
+
 ## What is SaferTrade?
 
 SaferTrade is the **only open-source, production-ready** DeFi threat detection platform. While other projects document threats, we detect them in real-time across 7 blockchain networks with 10+ specialized engines.
@@ -105,12 +122,41 @@ SaferTrade is the **only open-source, production-ready** DeFi threat detection p
 
 ## Quick Start
 
-### Prerequisites
+### Docker (Recommended)
+
+The fastest way to get started:
+
+```bash
+# Clone repository
+git clone https://github.com/hallosoares/safertrade.git
+cd safertrade
+
+# Configure environment
+cp .env.example .env
+# Edit .env with your RPC endpoints
+
+# Start everything
+docker-compose up -d
+
+# View logs
+docker-compose logs -f api
+
+# API is now available at http://localhost:8000
+```
+
+**Verify it's running:**
+```bash
+curl http://localhost:8000/health
+```
+
+### Manual Installation
+
+#### Prerequisites
 - Python 3.11+
 - Redis 7.0+
 - RPC endpoints for target chains
 
-### Installation
+#### Installation
 
 ```bash
 # Clone repository
@@ -128,9 +174,19 @@ pip install -r requirements.txt
 # Configure environment
 cp .env.example .env
 # Edit .env with your RPC endpoints
+
+# Start Redis (if not running)
+redis-server &
+
+# Run the API
+uvicorn api.main:app --reload
 ```
 
-### Basic Usage
+---
+
+## Examples
+
+### Detect a Honeypot Token
 
 ```python
 from engines.honeypot_checker.engine import HoneypotChecker
@@ -140,7 +196,7 @@ from shared.redis_client import get_redis_client
 redis = get_redis_client()
 checker = HoneypotChecker(redis)
 
-# Check a token for honeypot characteristics
+# Check a token
 result = checker.check_token("0x...")
 
 if result.is_honeypot:
@@ -151,16 +207,32 @@ else:
     print("Token appears safe")
 ```
 
-### Run Detection Engine
+### Subscribe to Real-Time Alerts
 
-```bash
-# Start the honeypot checker engine
-python -m engines.honeypot_checker.engine
+```python
+import json
+from shared.redis_client import get_redis_client
 
-# Output will stream to Redis: safertrade:results
+redis = get_redis_client()
+last_id = "$"
+
+print("Waiting for alerts...")
+while True:
+    messages = redis.xread({"safertrade:results": last_id}, block=5000)
+    if messages:
+        for stream, entries in messages:
+            for entry_id, data in entries:
+                alert = json.loads(data.get("data", "{}"))
+                print(f"Alert: {data.get('type')} - Risk: {alert.get('risk_score')}")
+                last_id = entry_id
 ```
 
-See [examples/](examples/) for more usage patterns.
+See [examples/](examples/) for more:
+- `honeypot_detection.py` - Check tokens for honeypot characteristics
+- `pump_dump_detection.py` - Detect pump-and-dump schemes
+- `realtime_alerts.py` - Subscribe to live alerts
+- `webhook_integration.py` - Forward alerts to Discord/Slack
+- `multi_chain_monitoring.py` - Monitor multiple chains
 
 ---
 
@@ -192,29 +264,7 @@ Key environment variables:
 | `RPC_POLYGON` | Polygon RPC endpoint | Optional |
 | `LOG_LEVEL` | Logging verbosity (DEBUG, INFO, WARNING) | No |
 
-See [docs/CONFIGURATION.md](docs/CONFIGURATION.md) for full reference.
-
----
-
-## Project Structure
-
-```
-safertrade/
-├── engines/           # Detection engines (modular, independent)
-│   ├── honeypot_checker/
-│   ├── pump_detector/
-│   ├── oracle_manipulation_detector/
-│   └── ...
-├── shared/            # Common utilities and clients
-│   ├── redis_client.py
-│   ├── chains.py
-│   └── ...
-├── schemas/           # Data models and validation
-├── data/              # Static data (phishing lists, etc.)
-├── docs/              # Documentation
-├── examples/          # Usage examples
-└── tests/             # Test suite
-```
+See [.env.example](.env.example) for full configuration reference.
 
 ---
 
@@ -228,21 +278,39 @@ When running the API server, documentation is available at:
 ### Example Endpoints
 
 ```bash
+# Health check
+curl http://localhost:8000/health
+
 # Check token safety
-GET /api/v1/token/{address}/safety
+curl http://localhost:8000/api/v1/token/0x.../safety
 
 # Get whale movements
-GET /api/v1/whale/movements?chain=ethereum&limit=100
+curl "http://localhost:8000/api/v1/whale/movements?chain=ethereum&limit=100"
+```
 
-# Subscribe to alerts (WebSocket)
-WS /api/v1/ws/alerts
+---
+
+## Project Structure
+
+```
+safertrade/
+├── engines/           # Detection engines (modular, independent)
+│   ├── honeypot_checker/
+│   ├── pump_detector/
+│   └── ...
+├── shared/            # Common utilities and clients
+├── schemas/           # Data models and validation
+├── data/              # Static data (phishing lists, etc.)
+├── docs/              # Documentation
+├── examples/          # Usage examples
+└── tests/             # Test suite
 ```
 
 ---
 
 ## Contributing
 
-We welcome contributions. Please read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting pull requests.
+We welcome contributions! Check out our [good first issues](https://github.com/hallosoares/safertrade/labels/good%20first%20issue) to get started.
 
 ### Development Setup
 
@@ -260,9 +328,7 @@ ruff check .
 mypy engines/ shared/
 ```
 
-### Good First Issues
-
-Check issues labeled [`good first issue`](https://github.com/hallosoares/safertrade/labels/good%20first%20issue) for beginner-friendly contributions.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ---
 
