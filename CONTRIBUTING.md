@@ -1,69 +1,94 @@
-# Contributing
-
-Thank you for your interest in contributing to SaferTrade. This project focuses on real DeFi threat detection and intelligence. Please keep changes factual and avoid synthetic data.
-
-Areas to contribute:
-- Engines: improve detection logic, add health endpoints, optimize async flows
-- Schemas: enhance `schemas/signals_v1.json`, keep `schema_v` discipline across outputs
-- API: add endpoints, improve OpenAPI descriptions, response models
-- Documentation: expand `docs/engines/` and `docs/GETTING_STARTED.md`, clarify setup and troubleshooting
-- Tests: add unit/integration tests for engines and API models
-- CI: GitHub Actions for lint (ruff), security (bandit), and test runs
-
-Guidelines:
-- Follow BUSL-1.1 licensing; production use requires commercial license
-- Use `ROOT_DIR` from `shared/paths.py` for file paths; avoid hardcoded absolute paths
-- Avoid mocking real data; connect to real sources where possible
-- Keep commit messages using Conventional Commits (feat, fix, docs, refactor)
-- Run linters and tests locally before opening a PR
 # Contributing to SaferTrade
+
+Thank you for your interest in contributing to SaferTrade. This document provides guidelines for contributing to the project.
 
 ## Getting Started
 
 1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/your-feature-name`
-3. Set up the development environment:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate
-   pip install -r requirements.txt
-   ```
+2. Clone your fork locally
+3. Create a feature branch: `git checkout -b feature/your-feature-name`
+4. Set up the development environment:
 
-## Development Workflow
+```bash
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+## Development Guidelines
 
 ### Code Standards
-- Follow PEP 8 Python style guidelines
-- Use type hints where appropriate
-- Write docstrings for all public functions and classes
-- Maintain test coverage above 80%
 
-### Testing
-- Run tests before submitting: `python -m pytest tests/`
-- Add tests for new features in `tests/` directory
-- Use descriptive test names: `test_function_name_expected_behavior`
+- Follow PEP 8 Python style guidelines
+- Use type hints for function signatures
+- Write docstrings for public functions and classes
+- Keep functions focused and single-purpose
+
+### Data Principles
+
+- Use real data sources only; avoid mocking or synthetic data in detection logic
+- Connect to actual blockchain RPCs and data providers
+- Maintain data integrity and accuracy
+
+### Path Handling
+
+- Use `ROOT_DIR` from `shared/paths.py` for file paths
+- Avoid hardcoded absolute paths
 
 ### Commit Messages
-Follow Conventional Commits specification:
-- `feat: add new trading signal analyzer`
-- `fix: correct calculation error in risk validator`
-- `docs: update API documentation`
-- `refactor: simplify main execution loop`
 
-## Submitting Changes
+Follow the Conventional Commits specification:
+
+- `feat:` — New feature
+- `fix:` — Bug fix
+- `docs:` — Documentation changes
+- `refactor:` — Code refactoring
+- `test:` — Adding or updating tests
+- `chore:` — Maintenance tasks
+
+Examples:
+```
+feat: add Base chain support to honeypot checker
+fix: correct gas estimation in transaction analyzer
+docs: update API endpoint documentation
+```
+
+## Testing
+
+Run tests before submitting changes:
+
+```bash
+python -m pytest tests/
+```
+
+- Add tests for new functionality
+- Maintain test coverage
+- Use descriptive test names
+
+## Pull Request Process
 
 1. Ensure all tests pass
 2. Update documentation if needed
 3. Create a pull request with:
    - Clear description of changes
-   - Link to related issues
-   - Screenshots/examples if UI changes
+   - Reference to related issues
+   - Summary of testing performed
 
-## Code Review Process
+4. Address review feedback promptly
+5. Keep pull requests focused and reasonably sized
 
-- All PRs require at least one review
-- Address feedback promptly
-- Keep PRs focused and small when possible
+## Areas to Contribute
 
-## Questions?
+- **Engines**: Improve detection logic, add health endpoints, optimize performance
+- **Schemas**: Enhance signal schemas, maintain version discipline
+- **Documentation**: Expand guides, clarify setup procedures
+- **Tests**: Add unit and integration tests
+- **CI/CD**: Improve GitHub Actions workflows
 
-Open an issue or reach out to the maintainers.
+## License
+
+By contributing, you agree that your contributions will be licensed under the project's BUSL-1.1 license. Production use of SaferTrade requires a commercial license.
+
+## Questions
+
+Open an issue or start a discussion if you have questions about contributing.

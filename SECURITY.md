@@ -2,86 +2,66 @@
 
 ## Supported Versions
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 2.x.x   | :white_check_mark: |
-| 1.x.x   | :x:                |
-| < 1.0   | :x:                |
+| Version | Supported |
+| ------- | --------- |
+| 1.x.x   | Yes       |
+| < 1.0   | No        |
 
 ## Reporting a Vulnerability
 
-We take security seriously at SaferTrade. If you discover a security vulnerability, please follow these steps:
+We take security seriously. If you discover a security vulnerability, please follow responsible disclosure practices.
 
-### Do NOT
+### Reporting Process
 
-- ❌ Open a public GitHub issue
-- ❌ Discuss the vulnerability publicly
-- ❌ Exploit the vulnerability beyond what is necessary to demonstrate it
+1. **Do not** open a public GitHub issue for security vulnerabilities
+2. **Do not** discuss the vulnerability publicly before it is fixed
+3. Report privately via [GitHub Security Advisories](https://github.com/gadayubn/safertrade/security/advisories/new)
 
-### Do
+### Information to Include
 
-1. **Report privately** via [GitHub Security Advisories](https://github.com/felipeWandworking/safertrade/security/advisories/new)
-2. **Include details**:
-   - Description of the vulnerability
-   - Steps to reproduce
-   - Potential impact
-   - Suggested fix (if any)
+- Description of the vulnerability
+- Steps to reproduce the issue
+- Potential impact assessment
+- Suggested remediation (if available)
 
-### What to Expect
+### Response Timeline
 
 | Timeline | Action |
 |----------|--------|
-| 24 hours | Acknowledgment of your report |
-| 72 hours | Initial assessment and triage |
+| 24 hours | Acknowledgment of report |
+| 72 hours | Initial assessment |
 | 7 days | Fix development begins |
-| 30 days | Patch released (for critical issues) |
-| 90 days | Public disclosure (coordinated) |
+| 30 days | Patch release for critical issues |
 
-### Security Scope
+## Security Scope
 
-The following are in scope for security reports:
+**In scope:**
+- Detection engine vulnerabilities
+- Authentication and authorization issues
+- Data handling and storage security
+- Redis stream security
+- Web3 integration security
 
-- ✅ Detection engines
-- ✅ API endpoints
-- ✅ Authentication/authorization
-- ✅ Data handling and storage
-- ✅ Redis stream security
-- ✅ Web3 integration security
-- ✅ Smart contract interaction safety
-
-### Out of Scope
-
-- ❌ Third-party services we don't control
-- ❌ Social engineering attacks
-- ❌ Physical attacks
-- ❌ Denial of service (unless critical)
+**Out of scope:**
+- Third-party service vulnerabilities
+- Social engineering
+- Physical security
+- Denial of service (unless critical)
 
 ## Security Best Practices
 
-When using SaferTrade:
+When deploying SaferTrade:
 
-1. **Environment Variables**: Never commit `.env` files
-2. **API Keys**: Rotate keys regularly
-3. **Redis**: Use authentication in production
-4. **Database**: Encrypt sensitive data at rest
-5. **Web3 RPCs**: Use private/authenticated endpoints
-
-## Bug Bounty Program
-
-We are working on establishing a formal bug bounty program. Currently, we offer:
-
-- 🏆 Public acknowledgment in CONTRIBUTORS.md
-- 📜 Security researcher credit in release notes
-- 🎁 SaferTrade swag (when available)
-
-For critical vulnerabilities that could result in fund loss, contact us for potential monetary rewards.
+1. Never commit `.env` files or credentials to version control
+2. Use strong, unique passwords for Redis authentication
+3. Rotate API keys regularly
+4. Use authenticated RPC endpoints in production
+5. Keep dependencies updated
 
 ## Contact
 
-- **Security Team**: security@safertrade.io
-- **PGP Key**: Available upon request
-- **GitHub Security**: [Security Advisories](https://github.com/felipeWandworking/safertrade/security/advisories)
+For security matters, use GitHub Security Advisories or contact the maintainers directly.
 
 ---
 
-Thank you for helping keep SaferTrade and its users safe! 🛡️
+Thank you for helping keep SaferTrade secure.

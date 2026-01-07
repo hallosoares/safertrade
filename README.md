@@ -1,93 +1,104 @@
-# 🛡️ SaferTrade — Open-Source DeFi Threat Detection
+# SaferTrade
 
-<div align="center">
+**Real-time DeFi threat detection and risk intelligence platform.**
+
+SaferTrade provides detection engines for identifying honeypots, phishing addresses, pump-and-dump schemes, oracle manipulation, and other DeFi threats across multiple blockchain networks.
 
 [![License: BUSL-1.1](https://img.shields.io/badge/License-BUSL--1.1-blue.svg)](LICENSE)
-[![Python 3.11+](https://img.shields.io/badge/Python-3.11+-3776ab.svg?logo=python&logoColor=white)](https://python.org)
-[![Redis](https://img.shields.io/badge/Redis-Streams-dc382d.svg?logo=redis&logoColor=white)](https://redis.io)
-[![Web3](https://img.shields.io/badge/Web3-Ethereum-3c3c3d.svg?logo=ethereum&logoColor=white)](https://ethereum.org)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
-
-**Real-time DeFi threat detection across 7 chains.**
-Detect honeypots, phishing, pump & dumps, oracle attacks, and more.
-
-[Getting Started](#-quick-start) •
-[Engines](#-detection-engines) •
-[Roadmap](#-roadmap) •
-[Contributing](#-contributing) •
-[License](#-license)
-
-</div>
+[![Python 3.11+](https://img.shields.io/badge/Python-3.11+-3776ab.svg)](https://python.org)
+[![Redis](https://img.shields.io/badge/Redis-Streams-dc382d.svg)](https://redis.io)
 
 ---
 
-## 🎯 What is SaferTrade?
+## Overview
 
-SaferTrade is an **open-source DeFi security toolkit** that helps developers and traders detect threats before they become victims:
+SaferTrade is a modular threat detection system designed for DeFi applications. It monitors on-chain activity in real-time and produces structured alerts via Redis Streams.
 
-- **🕵️ Honeypot Detection** — Identify tokens you can buy but can't sell
-- **🎣 Phishing Detection** — Flag known scam addresses and contracts
-- **📈 Pump & Dump Detection** — Spot coordinated price manipulation
-- **🔮 Oracle Attack Detection** — Monitor for price feed manipulation
-- **💧 Liquidity Analysis** — Assess rug pull risks
-- **⚡ Real-time Alerts** — Redis Streams for sub-second notifications
+**Core capabilities:**
+- Honeypot token detection (buy-only contracts)
+- Phishing address identification
+- Pump-and-dump pattern recognition
+- Oracle price manipulation monitoring
+- Stablecoin depeg tracking
+- Token holder concentration analysis
+- Liquidity risk assessment
 
-## 🏗️ Architecture
+## Architecture
 
 ```
-┌─────────────────┐     ┌──────────────────┐     ┌─────────────────┐
-│  Blockchain     │────▶│  Detection       │────▶│  Redis          │
-│  RPC Nodes      │     │  Engines         │     │  Streams        │
-└─────────────────┘     └──────────────────┘     └────────┬────────┘
-                                                          │
-                        ┌─────────────────────────────────┴─────┐
-                        ▼                   ▼                   ▼
-                  ┌──────────┐       ┌──────────┐       ┌──────────┐
-                  │  Your    │       │ Telegram │       │ Discord  │
-                  │  App/API │       │  Alerts  │       │  Alerts  │
-                  └──────────┘       └──────────┘       └──────────┘
+Blockchain RPC ──> Detection Engines ──> Redis Streams ──> Consumers
+                         │
+                         └──> SQLite (persistence)
 ```
 
-## ⚡ Quick Start
+**Components:**
+- **Engines**: Independent Python workers that analyze on-chain data
+- **Transport**: Redis Streams for real-time message delivery
+- **Storage**: SQLite with WAL journaling for historical persistence
+- **Alerts**: Canonical envelope format with schema versioning
+
+## Supported Networks
+
+| Network | Chain ID | Status |
+|---------|----------|--------|
+| Ethereum | 1 | Supported |
+| Base | 8453 | Supported |
+| Polygon | 137 | Supported |
+| Optimism | 10 | Supported |
+| Arbitrum | 42161 | Supported |
+| Blast | 81457 | Supported |
+| Solana | — | Supported |
+
+## Quick Start
+
+### Prerequisites
+- Python 3.11 or higher
+- Redis 6.0 or higher
+- Blockchain RPC access (Alchemy, Infura, or similar)
+
+### Installation
 
 ```bash
-# Clone the repository
 git clone https://github.com/gadayubn/safertrade.git
 cd safertrade
 
-# Create virtual environment
 python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+source venv/bin/activate
 
-# Install dependencies
 pip install -r requirements.txt
 
-# Configure environment
 cp .env.example .env
-# Edit .env with your RPC keys (get free ones at alchemy.com or infura.io)
+# Configure your RPC endpoints and Redis connection in .env
+```
 
-# Start Redis (required)
+### Running an Engine
+
+```bash
+# Start Redis
 redis-server &
 
-# Run a detection engine
+# Run honeypot detection
+python engines/honeypot_checker.py
+
+# Run with health check only
 python engines/honeypot_checker.py --health
 ```
 
-## 🔍 Detection Engines
+## Detection Engines
 
-| Engine | Description | Status |
-|--------|-------------|--------|
-| `honeypot_checker.py` | Detect buy-only tokens | ✅ Ready |
-| `phishing_detector.py` | Flag known scam addresses | ✅ Ready |
-| `pump_detector.py` | Spot price manipulation | ✅ Ready |
-| `oracle_manipulation_detector.py` | Monitor price feeds | ✅ Ready |
-| `stablecoin_depeg_monitor.py` | Track stablecoin pegs | ✅ Ready |
-| `token_holder_analyzer.py` | Analyze holder distribution | ✅ Ready |
-| `liquidity_analyzer.py` | Assess liquidity risks | ✅ Ready |
-| `gas_price_optimizer.py` | Optimize transaction costs | ✅ Ready |
-| `health_check.py` | System monitoring | ✅ Ready |
+| Engine | Purpose |
+|--------|---------|
+| `honeypot_checker.py` | Identifies tokens with restricted sell functionality |
+| `pump_detector.py` | Detects coordinated price manipulation patterns |
+| `oracle_manipulation_detector.py` | Monitors for price feed attacks |
+| `stablecoin_depeg_monitor.py` | Tracks stablecoin peg deviations |
+| `token_holder_analyzer.py` | Analyzes holder distribution and concentration |
+| `gas_price_optimizer.py` | Optimizes transaction gas costs |
+| `ohlcv_data_feed.py` | Provides market data feeds |
+| `alert_processor.py` | Routes alerts to delivery channels |
+| `health_check.py` | System health monitoring |
 
-### Example: Honeypot Detection
+### Usage Example
 
 ```python
 from engines.honeypot_checker import HoneypotChecker
@@ -98,98 +109,119 @@ result = await checker.analyze_token(
     chain="ethereum"
 )
 
-print(f"Is Honeypot: {result['is_honeypot']}")
-print(f"Risk Score: {result['risk_score']}")
+if result["is_honeypot"]:
+    print(f"Warning: Token flagged as honeypot")
+    print(f"Risk score: {result['risk_score']}")
 ```
 
-## 🌐 Supported Chains
+## Alert Format
 
-| Chain | Chain ID | Status |
-|-------|----------|--------|
-| Ethereum | 1 | ✅ Full support |
-| Base | 8453 | ✅ Full support |
-| Polygon | 137 | ✅ Full support |
-| Optimism | 10 | ✅ Full support |
-| Arbitrum | 42161 | ✅ Full support |
-| Blast | 81457 | ✅ Full support |
-| Solana | — | ✅ Full support |
+All engines produce alerts following the canonical envelope schema:
 
-## 🗺️ Roadmap
+```json
+{
+  "schema_v": "1.0",
+  "type": "HONEYPOT_ALERT",
+  "lane": "contract_safety",
+  "timestamp": "2026-01-07T12:00:00Z",
+  "data": {
+    "token_address": "0x...",
+    "chain": "ethereum",
+    "risk_score": 0.85,
+    "is_honeypot": true
+  }
+}
+```
 
-### ✅ Released (v1.0)
+See `schemas/signals_v1.json` for the complete schema definition.
+
+## Project Structure
+
+```
+safertrade/
+├── engines/           # Detection engine modules
+├── shared/            # Common utilities and configuration
+│   ├── chains.py      # Chain definitions and RPC config
+│   ├── redis_client.py
+│   ├── database_config.py
+│   └── ...
+├── schemas/           # Signal and alert schemas
+├── tests/             # Unit and integration tests
+├── docs/              # Documentation
+└── examples/          # Usage examples
+```
+
+## Configuration
+
+Environment variables (see `.env.example`):
+
+| Variable | Description |
+|----------|-------------|
+| `REDIS_HOST` | Redis server hostname |
+| `REDIS_PORT` | Redis server port |
+| `REDIS_PASSWORD` | Redis authentication password |
+| `ALCHEMY_API_KEY` | Alchemy RPC API key |
+| `ETHERSCAN_API_KEY` | Etherscan API key for contract verification |
+
+## Roadmap
+
+**Current Release (v1.0)**
 - Core detection engines
-- Multi-chain support (7 chains)
+- Multi-chain support
 - Redis Streams integration
-- Basic alert system
+- Canonical alert schema
 
-### 🚧 Coming Soon (v1.1)
-- [ ] **Web Dashboard** — Visual interface for monitoring (90% complete!)
-- [ ] **REST API** — Programmatic access to all detections
-- [ ] **WebSocket Alerts** — Real-time push notifications
-- [ ] **Telegram Bot** — Instant mobile alerts
+**In Development**
+- REST API for programmatic access
+- Web-based monitoring dashboard
+- WebSocket real-time notifications
+- Extended ML-based detection models
 
-### 🔮 Future (v2.0)
-- [ ] **ML-Powered Detection** — Machine learning models for advanced threats
-- [ ] **Whale Tracking** — Monitor large wallet movements
-- [ ] **MEV Detection** — Sandwich attack monitoring
-- [ ] **Flash Loan Analysis** — Flash loan attack detection
-- [ ] **Knowledge Vault** — RAG-powered threat intelligence
+**Planned**
+- Whale movement tracking
+- MEV and sandwich attack detection
+- Flash loan attack analysis
+- Cross-chain correlation
 
-> 💡 **Want to contribute?** Check out our [good first issues](https://github.com/gadayubn/safertrade/labels/good%20first%20issue)!
+## Contributing
 
-## 📊 Project Stats
+Contributions are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting pull requests.
 
-- **Detection Engines:** 15+ specialized modules
-- **Chains Supported:** 7 networks
-- **Alert Latency:** <1 second via Redis Streams
-- **License:** BUSL-1.1 (free for non-commercial use)
+**Development workflow:**
+1. Fork the repository
+2. Create a feature branch
+3. Make changes following the code standards
+4. Run tests: `python -m pytest tests/`
+5. Submit a pull request
 
-## 🤝 Contributing
+## License
 
-We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+This project is licensed under the Business Source License 1.1 (BUSL-1.1).
 
-```bash
-# Fork the repo, then:
-git checkout -b feature/your-feature
-# Make changes
-git commit -m "feat: Add your feature"
-git push origin feature/your-feature
-# Open a Pull Request
-```
+**Permitted uses:**
+- Learning and education
+- Development and testing
+- Research and evaluation
+- Internal proof-of-concept
 
-### Good First Issues
-- 🏷️ [good first issue](https://github.com/gadayubn/safertrade/labels/good%20first%20issue) — Great for newcomers
-- 🆘 [help wanted](https://github.com/gadayubn/safertrade/labels/help%20wanted) — We need your expertise
+**Commercial/production use** requires a separate commercial license. Contact the maintainers for licensing inquiries.
 
-## 📜 License
+**Change Date:** December 10, 2029 (converts to GPLv2)
 
-**Business Source License 1.1 (BUSL-1.1)**
+See [LICENSE](LICENSE), [COMMERCIAL_LICENSE.md](COMMERCIAL_LICENSE.md), and [LICENSE_FAQ.md](LICENSE_FAQ.md) for details.
 
-- ✅ **Free for:** Learning, development, testing, research, internal PoCs
-- ❌ **Requires license for:** Production/commercial use
-- 📅 **Change Date:** December 10, 2029 (converts to GPLv2)
+## Documentation
 
-See [LICENSE](LICENSE), [COMMERCIAL_LICENSE.md](COMMERCIAL_LICENSE.md), and [LICENSE_FAQ.md](LICENSE_FAQ.md).
-
-## 🔗 Links
-
-- [Documentation](docs/GETTING_STARTED.md)
+- [Getting Started Guide](docs/GETTING_STARTED.md)
 - [Commercial Licensing](COMMERCIAL_LICENSE.md)
 - [Security Policy](SECURITY.md)
 - [Changelog](CHANGELOG.md)
 
-## 💬 Community
+## Support
 
-- 💬 [GitHub Discussions](https://github.com/gadayubn/safertrade/discussions) — Ask questions, share ideas
-- 🐛 [Issue Tracker](https://github.com/gadayubn/safertrade/issues) — Report bugs, request features
-- 🐦 [Twitter](https://twitter.com/SaferTrade) — Follow for updates
+- [GitHub Issues](https://github.com/gadayubn/safertrade/issues) — Bug reports and feature requests
+- [GitHub Discussions](https://github.com/gadayubn/safertrade/discussions) — Questions and community discussion
 
 ---
 
-<div align="center">
-
-**Built for DeFi safety. Powered by the community.**
-
-⭐ Star this repo if you find it useful!
-
-</div>
+Copyright 2024-2026 SaferTrade Contributors. All rights reserved.
