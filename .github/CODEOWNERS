@@ -1,0 +1,18 @@
+# Code owners for SaferTrade
+# These users will be automatically requested for review
+
+# Default owners for everything
+* @gadayubn
+
+# Engine modules
+/engines/ @gadayubn
+
+# Shared utilities
+/shared/ @gadayubn
+
+# Schemas
+/schemas/ @gadayubn
+
+# Documentation
+*.md @gadayubn
+/docs/ @gadayubn
